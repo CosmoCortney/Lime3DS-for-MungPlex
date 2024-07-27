@@ -13,11 +13,15 @@
 
 <b>Lime3DS</b> is a project which aims to revive and continue work on Citra, a popular open-source Nintendo 3DS emulator which ceased development.
 
+<b>This is a <u>fork</u> of the original repo and adds some capabilities in order to be enhanced by [MungPlex](https://github.com/CosmoCortney/MungPlex).</b>
+This fork will only feature Windows builds as of now.
+
 # Installation
 
 ### Windows & MacOS
 
 Download the latest release from [Releases](https://github.com/Lime3DS/Lime3DS/releases).
+
 
 ---
 ### Android
