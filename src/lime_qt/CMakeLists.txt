@@ -192,7 +192,9 @@ add_executable(lime-qt
     util/spinbox.h
     util/util.cpp
     util/util.h
-)
+    mungplex/mungplex_helper.cpp
+    mungplex/mungplex_helper.h
+    )
 
 set_target_properties(lime-qt PROPERTIES OUTPUT_NAME "lime3ds-gui")
 

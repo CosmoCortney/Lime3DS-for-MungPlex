@@ -22,6 +22,7 @@
 #ifdef _WIN32
 #include <shlobj.h>
 #include <windows.h>
+#include "mungplex/mungplex_helper.h"
 #endif
 #ifdef __unix__
 #include <QVariant>
@@ -1332,7 +1333,11 @@ bool GMainWindow::LoadROM(const QString& filename) {
     game_path = filename;
     game_title_id = title_id;
 
-    return true;
+    MungPlexHelper::SetGameName(game_title_long);
+    MungPlexHelper::SetTitleID(title_id);
+    const auto regions = system.GetAppLoader().GetPreferredRegions();
+    MungPlexHelper::SetRegion(regions);
+    return MungPlexHelper::WriteHelperFile();
 }
 
 void GMainWindow::BootGame(const QString& filename) {
