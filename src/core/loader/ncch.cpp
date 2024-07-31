@@ -398,4 +398,11 @@ ResultStatus AppLoader_NCCH::ReadTitleLong(std::string& title) {
     return ResultStatus::Success;
 }
 
+/*
+ResultStatus AppLoader_NCCH::ReadTitleVersion(u16& titleVersion)
+{
+    //ToDo: Return Title Version
+    return ResultStatus::Success;
+}*/
+
 } // namespace Loader

@@ -16,6 +16,9 @@
 <b>This is a <u>fork</u> of the original repo and adds some capabilities in order to be enhanced by [MungPlex](https://github.com/CosmoCortney/MungPlex).</b>
 This fork will only feature Windows builds as of now.
 
+### ToDo
+Find a way to retrieve the title version (game update)
+
 # Installation
 
 ### Windows & MacOS

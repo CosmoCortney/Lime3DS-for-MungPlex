@@ -158,6 +158,9 @@ private:
     void AllowOSSleep();
 
     bool LoadROM(const QString& filename);
+#ifdef _WIN32
+    bool WriteCurrentGameInformation();
+#endif // _WIN32
     void BootGame(const QString& filename);
     void ShutdownGame();
 

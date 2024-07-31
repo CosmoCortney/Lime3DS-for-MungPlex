@@ -17,7 +17,7 @@ void MungPlexHelper::SetGameName(QString& gameName)
 
 void MungPlexHelper::SetTitleID(u64 titleID)
 {
-    _titleID.setNum(titleID, 16);
+    _titleID = _titleID.setNum(titleID, 16).rightJustified(16, u'0');
 }
 
 void MungPlexHelper::SetVersion(std::string& version)
@@ -67,15 +67,27 @@ void MungPlexHelper::SetRegion(const std::span<const u32>& preferredRegions)
     }
 }
 
+void MungPlexHelper::SetVRamPtr(u8* vRamPtr)
+{
+    _vRamPtr.setNum(reinterpret_cast<u64>(vRamPtr), 16);
+}
+
+void MungPlexHelper::SetVRamSize(const u32 vRamSize)
+{
+    _vRamSize.setNum(vRamSize, 16);
+}
+
 void MungPlexHelper::Reset()
 {
     _gameName.clear();
     _titleID.clear();
     _version.clear();
     _region.clear();
+    _vRamPtr.clear();
+    _vRamSize.clear();
 }
 
-bool MungPlexHelper::WriteHelperFile()
+bool MungPlexHelper::WriteHelperFile() const
 {
     auto tmp = new wchar_t[512];
     SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &tmp);
@@ -91,12 +103,12 @@ bool MungPlexHelper::WriteHelperFile()
 
     QFile file(path);
 
-    if (!file.open(QIODevice::ReadWrite | QIODevice::Text))
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         return false;
 
     QTextStream out(&file);
     out.setEncoding(QStringEncoder::Utf8);
-    out << _gameName << '\n' << _titleID << '\n' << _region << '\n' << _version;
+    out << _gameName << '\n' << _titleID << '\n' << _region << '\n' << _version << '\n' << _vRamPtr << '\n' << _vRamSize;
     file.close();
     return true;
 }

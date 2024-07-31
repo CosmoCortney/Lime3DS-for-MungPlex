@@ -1326,19 +1326,73 @@ bool GMainWindow::LoadROM(const QString& filename) {
     game_title = QString::fromStdString(title);
     game_title_long = QString::fromStdString(title_long);
     UpdateWindowTitle();
-
     u64 title_id;
     system.GetAppLoader().ReadProgramId(title_id);
-
     game_path = filename;
     game_title_id = title_id;
-
-    MungPlexHelper::SetGameName(game_title_long);
-    MungPlexHelper::SetTitleID(title_id);
-    const auto regions = system.GetAppLoader().GetPreferredRegions();
-    MungPlexHelper::SetRegion(regions);
-    return MungPlexHelper::WriteHelperFile();
+    return true;
 }
+
+#ifdef _WIN32
+bool GMainWindow::WriteCurrentGameInformation()
+{
+    MungPlexHelper mungplexHelper;
+    mungplexHelper.SetGameName(game_title_long);
+    mungplexHelper.SetTitleID(game_title_id);
+    const auto regions = system.GetAppLoader().GetPreferredRegions();
+    mungplexHelper.SetRegion(regions);
+
+    auto tbl = system.Kernel().memory.GetCurrentPageTable();
+    auto& arr = tbl.get()->GetPointerArray();
+    bool beginningFound = false;
+    u8* VRamPtr = nullptr;
+    u32 VRamSize = 0;
+
+    for (u32 i = 0; i < arr.size(); ++i) {
+        if (arr[i] == nullptr && !beginningFound)
+            continue;
+
+        VRamPtr = arr[i] - (i << 12);
+        break;
+    }
+
+    u8 new3DsMemoryMode = (u8)system.Kernel().GetNew3dsHwCapabilities().memory_mode;
+
+    if (new3DsMemoryMode) {
+        switch (new3DsMemoryMode) {
+        case (u8)Kernel::New3dsMemoryMode::NewDev1:
+            VRamSize = 0x0B200000;
+            break;
+        default:
+            VRamSize = 0x07C00000;
+        }
+    } else // legacy
+    {
+        u8 memoryMode = (u8)system.Kernel().GetMemoryMode();
+
+        switch (memoryMode) {
+        case (u8)Kernel::MemoryMode::Dev1:
+            VRamSize = 0x06000000;
+            break;
+        case (u8)Kernel::MemoryMode::Dev2:
+            VRamSize = 0x05000000;
+            break;
+        case (u8)Kernel::MemoryMode::Dev3:
+            VRamSize = 0x04800000;
+            break;
+        case (u8)Kernel::MemoryMode::Dev4:
+            VRamSize = 0x02000000;
+            break;
+        default:
+            VRamSize = 0x04000000;
+        }
+    }
+
+    mungplexHelper.SetVRamPtr(VRamPtr);
+    mungplexHelper.SetVRamSize(VRamSize);
+    return mungplexHelper.WriteHelperFile();
+}
+#endif // _WIN32
 
 void GMainWindow::BootGame(const QString& filename) {
     if (emu_thread) {
@@ -1408,6 +1462,8 @@ void GMainWindow::BootGame(const QString& filename) {
         secondary_window->ReleaseRenderTarget();
         return;
     }
+
+    WriteCurrentGameInformation();
 
     // Set everything up
     if (movie_record_on_start) {

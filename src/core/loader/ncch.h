@@ -71,6 +71,7 @@ public:
 
     ResultStatus ReadTitle(std::string& title) override;
     ResultStatus ReadTitleLong(std::string& title) override;
+    //ResultStatus ReadTitleVersion(u16& titleVersion) override;
 
 private:
     /**

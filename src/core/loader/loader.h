@@ -275,6 +275,11 @@ public:
         return ResultStatus::ErrorNotImplemented;
     }
 
+    /*
+    virtual ResultStatus ReadTitleVersion([[maybe_unused]] u16& titleVersion) {
+        return ResultStatus::ErrorNotImplemented;
+    }*/
+
     virtual bool SupportsSaveStates() {
         return true;
     }
